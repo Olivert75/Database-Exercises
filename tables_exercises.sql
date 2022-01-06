@@ -1,5 +1,6 @@
 USE employees;
 SHOW CREATE TABLE employees;
+SHOW tables;
  #there are 4 data types presents in employees table 
  #emp_no is numeric type  
  #first_name, last_name is string type
