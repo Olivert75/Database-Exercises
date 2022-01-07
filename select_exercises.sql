@@ -1,13 +1,18 @@
 use albums_db;
 
 #There are 6 rows in the alubms table
+select * from albums;
+describe albums;
 #There are 23 unique artist names in the ablums table
+select distinct artist from albums;
 #id is the primary key for the albums table
-#1961 is the oldest release date, 2011 is the most recent
+describe albums;
+#1967 is the oldest release date, 2011 is the most recent
+select release_date from albums;
 #The name of all albums by Pink Floyd
-select name from albums where artist = "Pink Floyd";
+select name from albums where artist = 'Pink Floyd';
 #The year Sgt. Pepper's Lonely Hearts Club Band was released
-select release_date from albums where name = "Sgt. Pepper's Lonely Hearts Club Band";
+select release_date from albums where name = 'Sgt. Pepper\'s Lonely Hearts Club Band';
 #The genre for the album Nevermind
 select genre from albums where name = 'Nevermind';
 #Which albums were released in the 1990s
