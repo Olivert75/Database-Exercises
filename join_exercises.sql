@@ -1,7 +1,12 @@
 use employees;
 
 #Using the example in the Associative Table Joins section as a guide, write a query that shows each department along with the name of the current manager for that department.
-select departments.dept_name as departments_name,concat(employees.first_name,' ',employees.last_name) as manager_name from departments inner join dept_manager on departments.dept_no = dept_manager.dept_no inner join employees on employees.emp_no = dept_manager.emp_no where dept_manager.to_date > now() order by departments.dept_name;
+select departments.dept_name as departments_name,concat(employees.first_name,' ',employees.last_name) as manager_name 
+from departments 
+inner join dept_manager on departments.dept_no = dept_manager.dept_no 
+inner join employees on employees.emp_no = dept_manager.emp_no 
+where dept_manager.to_date > now() 
+order by departments.dept_name;
 
 #Find the name of all departments currently managed by women.
 #Find the current titles of employees currently working in the Customer Service department.
