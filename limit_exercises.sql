@@ -9,4 +9,5 @@ select * from employees where hire_date between '1990-01-01' and '1999-12-31' an
 #Try to think of your results as batches, sets, or pages. The first five results are your first page. The five after that would be your second page, etc. Update the query to find the tenth page of results.
 select * from employees where hire_date between '1990-01-01' and '1999-12-31' and birth_date like '%-12-25' order by hire_date limit 5 offset 45;
 
-#LIMIT and OFFSET can be used to create multiple pages of data. What is the relationship between OFFSET (number of results to skip), LIMIT (number of results per page), and the page number? 'offset or limit + 1 = page number'
+#LIMIT and OFFSET can be used to create multiple pages of data. What is the relationship between OFFSET (number of results to skip), LIMIT (number of results per page), and the page number? 
+# (page - 1) * limit = offset
