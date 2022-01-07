@@ -11,5 +11,5 @@ select * from employees where last_name like "e%e" order by emp_no; #899 records
 #Write a query to to find all employees whose last name starts and ends with 'E'
 select * from employees where last_name like "e%e" order by hire_date desc; #899 records returned | Newest employee is Teiji Eldridge (hire date 1999-11-27) | oldest employee is Sergi Erde (hire date 1985-02-02)
 #Find all employees hired in the 90s and born on Christmas. Sort the results so that the oldest employee who was hired last is the first result. 
-select * from employees where birth_date like '%-12-25' and hire_date between '1990-01-01' and '1999-12-31'; #362 records returned
+select * from employees where birth_date like '%-12-25' and hire_date between '1990-01-01' and '1999-12-31' order by hire_date asc; #362 records returned | The oldest employee is Alselm Cappello (hire date 1990-01-01) | the newest employees is Khun Bernini (hire date 1999-08-31)
 
