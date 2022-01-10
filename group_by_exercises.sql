@@ -24,7 +24,7 @@ select concat(lower(substr(first_name, 1, 1)), lower(substr(last_name, 1, 4)), '
 select concat(lower(substr(first_name, 1, 1)), lower(substr(last_name, 1, 4)), '_', date_format(birth_date, '%m%y')) as user_name, first_name, last_name, birth_date from employees group by first_name, last_name, birth_date; # yes, there are 6 duplicates user_name
 
 #Using the dept_emp table, count how many current employees work in each department. The query result should show 9 rows, one for each department and the employee count.
-select dept_no, count(emp_no) as number_employees from dept_emp group by dept_no;
+select dept_no, count(*) as number_employees from dept_emp where to_date > now() group by dept_no;
 
 #Determine how many different salaries each employee has had. This includes both historic and current.
 select emp_no, count(salary) as employees_salaries from salaries group by emp_no;
