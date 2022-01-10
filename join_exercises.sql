@@ -87,4 +87,17 @@ where dept_manager.to_date > now()
 order by dept_name) as managers
 using (dept_name)
 where dept_emp.to_date > now();
+
 #Bonus Who is the highest paid employee within each department.
+select concat(first_name, ' ', last_name) as employee_name, dept_name, highest_salary.salary
+from employees 
+inner join salaries using (emp_no)
+inner join (
+select dept_name, max(salary) as salary
+from salaries 
+inner join employees using (emp_no)
+inner join dept_emp using (emp_no)
+inner join departments using (dept_no)
+where salaries.to_date > now()
+group by dept_name) as highest_salary
+using (salary);
