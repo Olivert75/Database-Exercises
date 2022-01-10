@@ -61,20 +61,21 @@ and to_date > now();
  
 #Find all the department names that currently have female managers.
 select dept_name from departments 
-inner join dept_emp using (dept_no)
-inner join employees using (emp_no) 
-where gender = 'f' and emp_no in (
-select emp_no from dept_manager where to_date > now());
+where dept_no in (
+select dept_no from dept_manager
+where to_date > now() and emp_no in (
+select emp_no from employees where gender = 'f'));
 
 #Find the first and last name of the employee with the highest salary.
 select first_name, last_name from employees 
-inner join salaries using (emp_no) 
-where salary = (select max(salary) from salaries);
+where emp_no in (
+select emp_no from salaries 
+where salary = (
+select max(salary) from salaries));
 
 #Find the department name that the employee with the highest salary works in.
 select dept_name from departments 
-inner join dept_emp using (dept_no)
-inner join employees using (emp_no)
-inner join salaries using (emp_no)
-where salary = (
-select max(salary) from salaries);
+where dept_no in ( 
+select dept_no from dept_emp where emp_no in (
+select emp_no from salaries where salary = (
+select max(salary) from salaries)));
