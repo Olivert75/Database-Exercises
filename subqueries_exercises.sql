@@ -50,14 +50,22 @@ select avg(salary) from salaries)
 and to_date > now();
 
 
-#How many current salaries are within 1 standard deviation of the current highest salary? (Hint: you can use a built in function to calculate the standard deviation.) What percentage of all salaries is this?
+#How many current salaries are within 1 standard deviation of the current highest salary? (Hint: you can use a built in function to calculate the standard deviation.)
 
 #Hint Number 1 You will likely use a combination of different kinds of subqueries.
 #Hint Number 2 Consider that the following code will produce the z score for current salaries.
- select * from salaries 
- where salary > (
- select max(salary) - std(salary) from salaries ) 
- and to_date > now(); #78 salaries???
+select count(*) as 1_standard_deviation_of_current_highest_salary from salaries
+where to_date > now() and salary > (
+select max(salary) - std(salary) from salaries
+where to_date > now());
+
+#What percentage of all salaries is this? 1_standard_deviation_of_current_highest_salary / total current salaries = percentage of all salaries
+select(select count(*) from salaries 
+where salary > (
+select max(salary) - std(salary) from salaries
+where to_date > now()) and to_date > now())*100 / (
+select count(*) from salaries 
+where to_date > now()) as percent_of_salaries;
  
 #Find all the department names that currently have female managers.
 select dept_name from departments 
@@ -78,4 +86,6 @@ select dept_name from departments
 where dept_no in ( 
 select dept_no from dept_emp where emp_no in (
 select emp_no from salaries where salary = (
-select max(salary) from salaries)));
+select max(salary) from salaries)) 
+and to_date > now()
+);
