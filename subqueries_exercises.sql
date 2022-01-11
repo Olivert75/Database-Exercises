@@ -59,7 +59,7 @@ where to_date > now() and salary > (
 select max(salary) - std(salary) from salaries
 where to_date > now());
 
-#What percentage of all salaries is this? 1_standard_deviation_of_current_highest_salary / total current salaries = percentage of all salaries
+#What percentage of all salaries is this? 1_standard_deviation_of_current_highest_salary * 100 / total current salaries = percentage of all salaries
 select(select count(*) from salaries 
 where salary > (
 select max(salary) - std(salary) from salaries
