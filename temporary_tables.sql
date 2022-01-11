@@ -45,7 +45,36 @@ select * from sakila.payment);
 describe sakila_payment_temporary_table;
 
 alter table sakila_payment_temporary_table
-add change_amount decimal;
+change amount change_amount decimal(6,2);
 
 update sakila_payment_temporary_table set change_amount = change_amount * 100;
+
+alter table sakila_payment_temporary_table
+change change_amount cents_amount int;
 #Find out how the current average pay in each department compares to the overall, historical average pay. In order to make the comparison easier, you should use the Z-score for salaries. In terms of salary, what is the best department right now to work for? The worst?
+
+-- create temporary table and name it
+create temporary table current_avg_salary as(
+select avg(employees.salaries.salary) as avg_salary, employees.departments.dept_name
+from employees.salaries
+join employees.dept_emp using (emp_no)
+join employees.departments using (dept_no)
+where employees.salaries.to_date > now() and employees.dept_emp.to_date > now()
+group by employees.departments.dept_name);
+
+-- create a columms for deviation and average for salary include historical and insert into temporary table
+/* This is how to find the avg for salaries and standard deviation
+	select avg(salary), std(salary) from employees.salaries;      */
+alter table current_avg_salary 
+add avg_salary_include_historical float not null;
+
+alter table current_avg_salary
+add standard_deviation float;
+
+update current_avg_salary set avg_salary_include_historical = 63810.7448;
+update current_avg_salary set standard_deviation = 16904.82828800014;
+
+-- z score = (raw score - mean) / standard deviation
+select *, ((avg_salary - avg_salary_include_historical)/standard_deviation) as Z_score 
+from current_avg_salary
+order by Z_score desc;
