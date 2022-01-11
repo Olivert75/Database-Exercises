@@ -21,7 +21,7 @@ select gender, count(gender) as count_gender from employees where first_name = '
 #Using your query that generates a username for all of the employees, generate a count employees for each unique username. Are there any duplicate usernames? BONUS: How many duplicate usernames are there?
 select concat(lower(substr(first_name, 1, 1)), lower(substr(last_name, 1, 4)), '_', date_format(birth_date, '%m%y')) as user_name, first_name, last_name, birth_date from employees;
 
-select concat(lower(substr(first_name, 1, 1)), lower(substr(last_name, 1, 4)), '_', date_format(birth_date, '%m%y')) as user_name, first_name, last_name, birth_date from employees group by first_name, last_name, birth_date; # yes, there are 6 duplicates user_name
+select concat(lower(substr(first_name, 1, 1)), lower(substr(last_name, 1, 4)), '_', date_format(birth_date, '%m%y')) as user_name, first_name, last_name, birth_date, count(*) as same_username from employees group by user_name, first_name, last_name, birth_date having same_username > 1; # yes, there are 6 duplicates user_name but the output doesnt show
 
 #Using the dept_emp table, count how many current employees work in each department. The query result should show 9 rows, one for each department and the employee count.
 select dept_no, count(*) as number_employees from dept_emp where to_date > now() group by dept_no;
