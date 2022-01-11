@@ -73,6 +73,13 @@ where dept_manager.to_date > now() and salaries.to_date > now()
 order by salary desc;
 
 #Determine the average salary for each department. Use all salary information and round your results.
+select format(avg(salary), 2) as avg_salary, dept_name
+from salaries
+join dept_emp using (emp_no)
+join departments using (dept_no)
+group by dept_name
+order by avg_salary desc;
+
 #Bonus Find the names of all current employees, their department name, and their current manager's name.
 select concat (first_name, ' ', last_name) as employee_name, dept_name as departments_name, managers.manager_name
 from departments
