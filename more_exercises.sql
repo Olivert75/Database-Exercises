@@ -234,3 +234,22 @@ join rental using (inventory_id)
 join payment using (rental_id)
 group by category.name order by total_amount desc limit 5;
 
+use sakila;
+
+/*SELECT statements
+
+Select all columns from the actor table.
+Select only the last_name column from the actor table.
+Select only the following columns from the film table.*/
+select * from actor;
+select last_name from actor;
+
+/*DISTINCT operator
+
+Select all distinct (different) last names from the actor table.
+Select all distinct (different) postal codes from the address table.
+Select all distinct (different) ratings from the film table.*/
+select distinct last_name from actor;
+select distinct postal_code from address;
+select distinct rating from film;
+
