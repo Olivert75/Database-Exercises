@@ -63,13 +63,16 @@ where employees.salaries.to_date > now() and employees.dept_emp.to_date > now()
 group by employees.departments.dept_name);
 
 -- create a columms for deviation and average for salary include historical and insert into temporary table
+
 /* This is how to find the avg for salaries and standard deviation
-	select avg(salary), std(salary) from employees.salaries;      */
+	select avg(salary), std(salary) from employees.salaries;   
+run this using emporloyees database and then copy the value or create a temporary table for this 
+*/ 
 alter table current_avg_salary 
 add avg_salary_include_historical float not null;
 
 alter table current_avg_salary
-add standard_deviation float;
+add standard_deviation float not null;
 
 update current_avg_salary set avg_salary_include_historical = 63810.7448;
 update current_avg_salary set standard_deviation = 16904.82828800014;
@@ -78,3 +81,33 @@ update current_avg_salary set standard_deviation = 16904.82828800014;
 select *, ((avg_salary - avg_salary_include_historical)/standard_deviation) as Z_score 
 from current_avg_salary
 order by Z_score desc;
+
+-- alternative way - create temporary table 
+/*
+create temporary table historic_avg_salary as(
+select avg(salary) as historical_salary, std(salary) as std_deviation from employees.salaries);
+
+create temporary table current_avg_salary as(
+select avg(employees.salaries.salary) as avg_salary, employees.departments.dept_name
+from employees.salaries
+join employees.dept_emp using (emp_no)
+join employees.departments using (dept_no)
+where employees.salaries.to_date > now() and employees.dept_emp.to_date > now()
+group by employees.departments.dept_name);
+
+alter table current_avg_salary 
+add avg_salary_include_historical float not null;
+
+alter table current_avg_salary
+add standard_deviations float not null;
+
+alter table current_avg_salary
+add z_score float not null;
+
+update current_avg_salary set avg_salary_include_historical = (select historical_salary from historic_avg_salary);
+update current_avg_salary set standard_deviations = (select std_deviation from historic_avg_salary);
+
+update current_avg_salary set z_score = (avg_salary - avg_salary_include_historical) / standard_deviations;
+
+select * from current_avg_salary order by z_score desc;
+*/
