@@ -121,3 +121,116 @@ select lifeexpectancy
 from country
 join city on city.countrycode = country.code
 where city.name like '%tokyo%';
+
+-- *****Sakila Database*****
+use sakila;
+
+#Display the first and last names in all lowercase of all the actors.
+select lower(concat(first_name, ' ', last_name)) as full_actors_name from actor;
+
+#You need to find the ID number, first name, and last name of an actor, of whom you know only the first name, "Joe." What is one query would you could use to obtain this information?
+select actor_id, first_name, last_name from actor where first_name like '%joe%';
+
+#Find all actors whose last name contain the letters "gen":
+select concat(first_name, ' ', last_name) as full_actors_name from actor 
+where last_name like '%gen%';
+
+#Find all actors whose last names contain the letters "li". This time, order the rows by last name and first name, in that order.
+select concat(first_name, ' ', last_name), first_name, last_name as full_actors_name from actor 
+where last_name like '%li%'
+order by last_name;
+
+#Using IN, display the country_id and country columns for the following countries: Afghanistan, Bangladesh, and China:
+select country_id, country from country 
+where country in ('Afghanistan', 'Bangladesh', 'China');
+
+#List the last names of all the actors, as well as how many actors have that last name.
+select last_name, count(*) as num_same_last_name
+from actor group by last_name;
+
+#List last names of actors and the number of actors who have that last name, but only for names that are shared by at least two actors
+select last_name, count(*) as num_same_last_name
+from actor group by last_name having num_same_last_name > 1;
+
+#You cannot locate the schema of the address table. Which query would you use to re-create it?
+use sakila;
+
+#Use JOIN to display the first and last names, as well as the address, of each staff member.
+select first_name, last_name, address from staff
+join address using (address_id);
+
+#Use JOIN to display the total amount rung up by each staff member in August of 2005.
+select first_name, last_name, sum(amount) as total_amount
+from staff
+join payment using (staff_id)
+where year(payment_date) = 2005 and month(payment_date) = 8
+group by staff_id;
+
+#List each film and the number of actors who are listed for that film.
+select count(*) as num_film
+from inventory
+join film using (film_id)
+group by film_id;
+
+#How many copies of the film Hunchback Impossible exist in the inventory system?
+select count(*) as num_film
+from inventory
+join film using (film_id)
+where title like 'Hunchback Impossible'
+group by film_id;
+
+#The music of Queen and Kris Kristofferson have seen an unlikely resurgence. As an unintended consequence, films starting with the letters K and Q have also soared in popularity. Use subqueries to display the titles of movies starting with the letters K and Q whose language is English.
+select title from(
+select title, language_id from film
+where title like '%k' or title like '%q') as qk_titles
+join language using (language_id)
+where language.name like 'English';
+
+#Use subqueries to display all actors who appear in the film Alone Trip.
+select concat(first_name,' ', last_name) as actor_name from (
+select title, film_id from film
+where title like 'alone trip') as title
+join film_actor using (film_id)
+join actor using (actor_id);
+-- Alternative way
+select first_name, last_name
+from film
+join film_actor using (film_id)
+join actor using (actor_id)
+where title = 'alone trip' ;
+
+#You want to run an email marketing campaign in Canada, for which you will need the names and email addresses of all Canadian customers.
+select email, country, first_name, last_name from (
+select country, country_id from country 
+where country like 'canada') as country
+join city using (country_id)
+join address using (city_id)
+join customer using (address_id);
+
+#Sales have been lagging among young families, and you wish to target all family movies for a promotion. Identify all movies categorized as famiy films.
+select title from film
+join film_category using (film_id)
+join category using (category_id)
+where category.name like 'family';
+
+#Write a query to display how much business, in dollars, each store brought in.
+select store_id, sum(amount) from store
+join customer using (store_id)
+join payment using (customer_id)
+group by store_id;
+
+#Write a query to display for each store its store ID, city, and country.
+select store_id, city, country from store 
+join address using (address_id)
+join city using (city_id)
+join country using (country_id);
+
+#List the top five genres in gross revenue in descending order. (Hint: you may need to use the following tables: category, film_category, inventory, payment, and rental.)
+select category.name, sum(amount) as total_amount from film
+join film_category using (film_id)
+join category using (category_id)
+join inventory using (film_id)
+join rental using (inventory_id)
+join payment using (rental_id)
+group by category.name order by total_amount desc limit 5;
+
