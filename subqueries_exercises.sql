@@ -2,10 +2,11 @@ use employees;
 
 #Find all the current employees with the same hire date as employee 101010 using a sub-query.
 select * from employees 
-where hire_date in ( 
-select hire_date 
-from employees 
-where emp_no ='101010');
+where emp_no in ( 
+select emp_no
+from dept_emp 
+where to_date > now()) and hire_date = (
+select hire_date from employees where emp_no = 101010);
 
 #Find all the titles ever held by all current employees with the first name Aamod.
 select title from titles
