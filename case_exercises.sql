@@ -9,13 +9,14 @@ join departments using (dept_no)
 group by emp_no, dept_name;
 
 #Write a query that returns all employees (emp_no), their department number, their start date, their end date, and a new column 'is_current_employee' that is a 1 if the employee is still with the company and 0 if not.
-select last_name,
+select emp_no, hire_date, to_date,
 case 
 when substr(last_name, 1, 1) between 'A' and 'H' then 'A-H'
 when substr(last_name, 1, 1) between 'I' and 'Q' then 'I-Q'
 else 'R-Z'
-end as 'Alpha Group'
-from employees order by last_name;
+end as 'Alpha Group',
+if (to_date > now(), 1, 0) as still_working from employees 
+join dept_emp using (emp_no) order by last_name;
 
 #How many employees (current or previous) were born in each decade?
 select count(emp_no) as num_employees,
