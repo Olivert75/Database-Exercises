@@ -12,26 +12,20 @@ select hire_date from employees where emp_no = 101010);
 select title from titles
 where emp_no in ( 
 select emp_no from employees 
-where first_name like '%aamod%')
+where first_name like '%aamod%') and to_date > now()
 group by title;
 
 #How many people in the employees table are no longer working for the company? Give the answer in a comment in your code.
-select count(emp_no) as num_employees_no_longer_working
+
+select count(*) as former_emp
 from employees 
 where emp_no not in (
 select emp_no from dept_emp 
-where to_date > now());
+where to_date > NOW());
 
--- alternative way
-select concat(first_name, ' ', last_name) as employee_name, to_date
-from employees 
-inner join dept_emp using (emp_no)
-where to_date in (
-select to_date from dept_emp 
-where to_date < now());
 
 #Find all the current department managers that are female. List their names in a comment in your code.
-select concat(first_name, ' ', last_name) as managers_name, gender 
+select concat(first_name, ' ', last_name) as managers_name 
 from employees 
 inner join dept_manager using (emp_no)
 where gender in (
