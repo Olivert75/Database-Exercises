@@ -281,13 +281,12 @@ Select all columns from the film table for films rated G, PG-13 or NC-17.*/
 select phone, district from address where district in('California', 'England', 'Taipei','West Java');
 select payment_id, amount, payment_date from payment where date(payment_date) in ('2005-05-25', '2005-05-27',  '2005-05-29');
 select * from film where rating in ('g', 'pg-13', 'nc-17');
-
+describe payment;
 /*BETWEEN operator
 
 Select all columns from the payment table for payments made between midnight 05/25/2005 and 1 second before midnight 05/26/2005.
 Select the film_id, title, and descrition columns from the film table for films where the length of the description is between 100 and 120.*/
 select * from payment where payment_date between '2005-05-25 00:00:01' and '2005-05-26 00:00:00';
-describe payment;
 select film_id, title, description from film where length between (1*100) and (2*60);
 
 /*LIKE operator
@@ -295,10 +294,90 @@ select film_id, title, description from film where length between (1*100) and (2
 Select the following columns from the film table for rows where the description begins with "A Thoughtful".
 Select the following columns from the film table for rows where the description ends with the word "Boat".
 Select the following columns from the film table where the description contains the word "Database" and the length of the film is greater than 3 hours.*/
-
+select * from film where description like 'a%';
+select * from film where description like '%boat';
+select * from film where description like '%database%' and length > (3*60);
 
 /*LIMIT Operator
 
 Select all columns from the payment table and only include the first 20 rows.
 Select the payment date and amount columns from the payment table for rows where the payment amount is greater than 5, and only select rows whose zero-based index in the result set is between 1000-2000.
 Select all columns from the customer table, limiting results to those where the zero-based index is between 101-200.*/
+select * from payment limit 20;
+select payment_date, amount from payment where amount > 5 limit 1000 offset 1000 ;
+select * from payment limit 100 offset 100 ;
+
+/*ORDER BY statement
+
+Select all columns from the film table and order rows by the length field in ascending order.
+Select all distinct ratings from the film table ordered by rating in descending order.
+Select the payment date and amount columns from the payment table for the first 20 payments ordered by payment amount in descending order.
+Select the title, description, special features, length, and rental duration columns from the film table for the first 10 films with behind the scenes footage under 2 hours in length and a rental duration between 5 and 7 days, ordered by length in descending order.*/
+select * from film order by length asc;
+select * from film order by rating desc;
+
+#What is the average replacement cost of a film? Does this change depending on the rating of the film?
+select avg(replacement_cost) from film;
+
+select rating, avg(replacement_cost) from film group by rating;
+
+#How many different films of each genre are in the database?
+select name, count(*) from film
+join film_category using (film_id)
+join category using (category_id)
+group by name;
+
+#What are the 5 frequently rented films?
+select title, count(*)
+from film
+join inventory using (film_id)
+join rental using (inventory_id)
+group by title
+order by count(*) desc limit 5;
+
+#What are the most most profitable films (in terms of gross revenue)?
+select title, sum(amount) as total
+from film
+join inventory using (film_id)
+join rental using (inventory_id)
+join payment using (rental_id)
+group by title order by total desc;
+
+#Who is the best customer?
+select concat(customer.first_name, ' ', customer.last_name) as name, sum(payment.amount) as revenue
+from film 
+join inventory using (film_id)
+join rental using (inventory_id)
+join payment using (rental_id)
+join customer on customer.customer_id = payment.customer_id
+group by concat(customer.first_name, ' ', customer.last_name);
+
+#Who are the most popular actors (that have appeared in the most films)?
+select concat(first_name, ' ', last_name) as actor_name, count(*)
+from film
+join film_actor using (film_id)
+join actor using (actor_id)
+group by concat(first_name, ' ', last_name)
+order by count(*) desc;
+
+#What are the sales for each store for each month in 2005?
+select substr(payment_date, 1, 7) as month, store_id, sum(amount) as total
+from payment 
+join store on staff_id = manager_staff_id
+where substr(payment_date, 1, 7)
+group by substr(payment_date, 1, 7), store_id;
+
+-- or 
+select date_format(payment_date, '%Y%m') as month, store_id, sum(amount) as total
+from payment 
+join store on staff_id = manager_staff_id
+where date_format(payment_date, '%Y%m')
+group by date_format(payment_date, '%Y%m'), store_id;
+
+#Bonus: Find the film title, customer name, customer phone number, and customer address for all the outstanding DVDs.
+select title, first_name, last_name, phone from film
+join inventory using (film_id)
+join rental using (inventory_id)
+join customer using (customer_id)
+join address using (address_id)
+where return_date is null;
